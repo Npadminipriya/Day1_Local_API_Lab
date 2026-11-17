@@ -1,0 +1,25 @@
+GRAY­SENTINEL DAY 1 — SAFE LOCAL TESTS
+Scope: 127.0.0.1 only; synthetic users and tokens. Do not point these requests at public/third-party systems.
+
+1) Start the intentionally vulnerable app:
+   python app_vulnerable.py
+
+2) In a second terminal, verify unauthenticated access is blocked (expected 401):
+   curl -i http://127.0.0.1:8000/api/users/2
+
+3) Authenticate as synthetic User 1 and request own profile (expected 200):
+   curl -i -H "Authorization: Bearer token-user-1" http://127.0.0.1:8000/api/users/1
+
+4) BOLA test: same User 1 token requests User 2 profile (vulnerable app returns 200 — finding):
+   curl -i -H "Authorization: Bearer token-user-1" http://127.0.0.1:8000/api/users/2
+
+5) Stop vulnerable app (Ctrl+C), then start fixed app:
+   python app_fixed.py
+
+6) Repeat step 4 (fixed app should return 403 Forbidden).
+
+Evidence to capture:
+- Screenshot 01: terminal showing app bound to 127.0.0.1:8000.
+- Screenshot 02: step 4 request/response showing User 1 token received User 2 synthetic profile (redact token if visible).
+- Screenshot 03: fixed app response showing 403 for the same cross-user request.
+Save screenshots in 02_Screenshots/. Only include screenshots you actually capture.
